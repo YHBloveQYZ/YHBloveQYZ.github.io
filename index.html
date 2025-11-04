@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>给你的专属惊喜 ❤️</title>
+    <title>给你的专属奖励 ❤️</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+        /* 保持原有样式不变 */
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Ma+Shan+Zheng&display=swap');
         
         * {
             margin: 0;
@@ -18,6 +19,45 @@
             overflow: hidden;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             height: 100vh;
+            font-size: 16px;
+        }
+
+        /* 倒计时样式 */
+        .countdown {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            color: white;
+        }
+        
+        .countdown.active {
+            display: flex;
+        }
+        
+        .countdown-message {
+            font-size: 24px;
+            margin-bottom: 30px;
+            text-align: center;
+            padding: 0 20px;
+        }
+        
+        .countdown-number {
+            font-size: 120px;
+            font-weight: bold;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
         }
 
         /* 页面容器 */
@@ -56,10 +96,10 @@
         }
 
         .intro-content {
-            max-width: 850px;
-            padding: 60px;
+            max-width: 750px;
+            padding: 45px;
             background: rgba(255, 255, 255, 0.98);
-            border-radius: 30px;
+            border-radius: 25px;
             box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
             text-align: center;
             border: 3px solid rgba(255, 255, 255, 0.5);
@@ -67,19 +107,20 @@
         }
 
         #intro-text {
-            font-size: 28px;
-            line-height: 2;
+            font-size: 22px;
+            line-height: 1.8;
             color: #2d3436;
-            min-height: 250px;
+            min-height: 180px;
             white-space: pre-wrap;
             font-weight: 400;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            letter-spacing: 0.5px;
         }
 
         .cursor {
             display: inline-block;
             width: 3px;
-            height: 28px;
+            height: 22px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             animation: blink 1s infinite;
             margin-left: 3px;
@@ -91,22 +132,18 @@
         }
 
         .click-hint {
-            margin-top: 40px;
-            font-size: 22px;
-            font-weight: 500;
+            margin-top: 30px;
+            font-size: 18px;
+            font-weight: 600;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             animation: pulse 2s infinite;
+            letter-spacing: 1px;
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 0.6; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.05); }
-        }
-
-        /* 游戏页面 */
+        /* 其余样式保持不变 */
         .game-page {
             flex-direction: column;
         }
@@ -125,42 +162,43 @@
 
         .game-container {
             background: rgba(255, 255, 255, 0.98);
-            border-radius: 30px;
-            padding: 40px;
+            border-radius: 25px;
+            padding: 30px;
             box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
             border: 3px solid rgba(255, 255, 255, 0.6);
         }
 
         .game-title {
-            font-size: 32px;
+            font-size: 26px;
             font-weight: 700;
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             text-align: center;
             text-shadow: 0 2px 10px rgba(245, 87, 108, 0.2);
+            letter-spacing: 1px;
         }
 
         canvas {
             display: block;
-            border: 4px solid;
+            border: 3px solid;
             border-image: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) 1;
-            border-radius: 15px;
+            border-radius: 12px;
             background: linear-gradient(135deg, #fff5f7 0%, #fffef9 100%);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
         }
 
         .game-info {
-            margin-top: 20px;
-            font-size: 19px;
+            margin-top: 15px;
+            font-size: 16px;
             color: #555;
             text-align: center;
             font-weight: 400;
+            letter-spacing: 0.3px;
         }
 
-        /* 游戏说明模态框 */
         .instruction-modal {
             display: none;
             position: fixed;
@@ -182,9 +220,9 @@
 
         .instruction-content {
             background: white;
-            padding: 50px;
-            border-radius: 30px;
-            max-width: 600px;
+            padding: 40px;
+            border-radius: 25px;
+            max-width: 550px;
             width: 90%;
             box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
             animation: slideInUp 0.5s ease-out;
@@ -204,26 +242,28 @@
         }
 
         .instruction-title {
-            font-size: 30px;
+            font-size: 26px;
             font-weight: 700;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            letter-spacing: 1px;
         }
 
         .instruction-text {
-            font-size: 20px;
-            line-height: 1.8;
+            font-size: 17px;
+            line-height: 1.7;
             color: #333;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             white-space: pre-line;
+            letter-spacing: 0.3px;
         }
 
         .instruction-btn {
-            padding: 18px 50px;
-            font-size: 20px;
+            padding: 15px 40px;
+            font-size: 17px;
             font-weight: 600;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -232,6 +272,7 @@
             cursor: pointer;
             transition: all 0.4s;
             box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            letter-spacing: 0.5px;
         }
 
         .instruction-btn:hover {
@@ -239,7 +280,6 @@
             box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
         }
 
-        /* 问答模态框 */
         .modal {
             display: none;
             position: fixed;
@@ -260,9 +300,9 @@
 
         .modal-content {
             background: white;
-            padding: 50px;
-            border-radius: 30px;
-            max-width: 550px;
+            padding: 40px;
+            border-radius: 25px;
+            max-width: 500px;
             width: 90%;
             box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
             animation: slideIn 0.5s ease-out;
@@ -281,31 +321,33 @@
         }
 
         .question {
-            font-size: 24px;
-            font-weight: 500;
+            font-size: 21px;
+            font-weight: 600;
             color: #2d3436;
-            margin-bottom: 35px;
+            margin-bottom: 30px;
             text-align: center;
-            line-height: 1.8;
+            line-height: 1.6;
+            letter-spacing: 0.5px;
         }
 
         .options {
             display: flex;
             flex-direction: column;
-            gap: 18px;
+            gap: 15px;
         }
 
         .option-btn {
-            padding: 20px 35px;
-            font-size: 20px;
+            padding: 17px 30px;
+            font-size: 17px;
             font-weight: 500;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 15px;
+            border-radius: 12px;
             cursor: pointer;
             transition: all 0.4s;
             box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            letter-spacing: 0.3px;
         }
 
         .option-btn:hover {
@@ -317,7 +359,6 @@
             transform: translateY(-1px);
         }
 
-        /* 失败页面 */
         .failure-page {
             flex-direction: column;
         }
@@ -331,10 +372,10 @@
         }
 
         .failure-content {
-            max-width: 700px;
-            padding: 60px;
+            max-width: 650px;
+            padding: 45px;
             background: rgba(255, 255, 255, 0.98);
-            border-radius: 30px;
+            border-radius: 25px;
             box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
             text-align: center;
             border: 3px solid rgba(255, 255, 255, 0.6);
@@ -348,8 +389,8 @@
         }
 
         .failure-emoji {
-            font-size: 100px;
-            margin-bottom: 30px;
+            font-size: 80px;
+            margin-bottom: 25px;
             animation: swing 1s infinite;
         }
 
@@ -359,26 +400,28 @@
         }
 
         .failure-title {
-            font-size: 36px;
+            font-size: 30px;
             font-weight: 700;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            letter-spacing: 1px;
         }
 
         .failure-text {
-            font-size: 22px;
-            line-height: 2;
+            font-size: 18px;
+            line-height: 1.7;
             color: #2d3436;
-            margin-bottom: 35px;
+            margin-bottom: 30px;
             white-space: pre-line;
+            letter-spacing: 0.3px;
         }
 
         .continue-btn {
-            padding: 18px 50px;
-            font-size: 20px;
+            padding: 15px 40px;
+            font-size: 17px;
             font-weight: 600;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -387,6 +430,7 @@
             cursor: pointer;
             transition: all 0.4s;
             box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            letter-spacing: 0.5px;
         }
 
         .continue-btn:hover {
@@ -394,17 +438,15 @@
             box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
         }
 
-        /* 过渡页面（视频前） */
         #transition-page {
             background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-            cursor: pointer;
         }
 
         .transition-content {
-            max-width: 800px;
-            padding: 60px;
+            max-width: 700px;
+            padding: 45px;
             background: rgba(255, 255, 255, 0.98);
-            border-radius: 30px;
+            border-radius: 25px;
             box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
             text-align: center;
             border: 3px solid rgba(255, 255, 255, 0.6);
@@ -419,8 +461,8 @@
         }
 
         .transition-emoji {
-            font-size: 100px;
-            margin-bottom: 30px;
+            font-size: 80px;
+            margin-bottom: 25px;
             animation: rotate 2s linear infinite;
         }
 
@@ -431,14 +473,15 @@
         }
 
         .transition-title {
-            font-size: 42px;
+            font-size: 36px;
             font-weight: 700;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             animation: glow 2s infinite;
+            letter-spacing: 1px;
         }
 
         @keyframes glow {
@@ -447,24 +490,32 @@
         }
 
         .transition-message {
-            font-size: 26px;
-            line-height: 2;
+            font-size: 18px;
+            line-height: 1.7;
             color: #2d3436;
             white-space: pre-line;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
+            letter-spacing: 0.3px;
         }
 
         .transition-hint {
-            font-size: 22px;
-            font-weight: 500;
+            font-size: 18px;
+            font-weight: 600;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             animation: pulse 2s infinite;
+            letter-spacing: 0.5px;
         }
 
-        /* 视频页面 */
+        .space-hint {
+            margin-top: 15px;
+            font-size: 17px;
+            color: #764ba2;
+            font-weight: 500;
+        }
+
         #video-page {
             background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
             flex-direction: column;
@@ -472,27 +523,26 @@
 
         .video-container {
             background: rgba(255, 255, 255, 0.98);
-            padding: 40px;
-            border-radius: 30px;
+            padding: 30px;
+            border-radius: 25px;
             box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
             border: 3px solid rgba(255, 255, 255, 0.6);
         }
 
         video {
-            max-width: 600px;
+            max-width: 550px;
             width: 100%;
-            border-radius: 20px;
+            border-radius: 15px;
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
         }
 
-        /* 答题错误提示 */
         .wrong-answer {
             display: none;
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 150px;
+            font-size: 120px;
             z-index: 2000;
             animation: wrongShake 0.5s ease-in-out;
         }
@@ -507,16 +557,83 @@
             75% { transform: translate(-50%, -50%) rotate(15deg) scale(1.2); }
         }
 
-        /* 最终页面 */
+        .final-question-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .final-question-modal.active {
+            display: flex;
+        }
+
+        .final-question-content {
+            background: white;
+            padding: 50px;
+            border-radius: 25px;
+            max-width: 550px;
+            width: 90%;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+            animation: slideIn 0.5s ease-out;
+            border: 3px solid rgba(245, 87, 108, 0.3);
+            text-align: center;
+        }
+
+        .final-question-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2d3436;
+            margin-bottom: 35px;
+            line-height: 1.8;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 0.5px;
+        }
+
+        .final-options {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .final-option-btn {
+            padding: 18px 35px;
+            font-size: 18px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.4s;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            letter-spacing: 0.3px;
+        }
+
+        .final-option-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.5);
+        }
+
         #final-page {
             background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
         }
 
         .final-content {
-            max-width: 800px;
-            padding: 60px;
+            max-width: 700px;
+            padding: 45px;
             background: rgba(255, 255, 255, 0.98);
-            border-radius: 30px;
+            border-radius: 25px;
             box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
             text-align: center;
             border: 3px solid rgba(255, 255, 255, 0.6);
@@ -538,8 +655,8 @@
         }
 
         .heart-icon {
-            font-size: 80px;
-            margin-bottom: 30px;
+            font-size: 70px;
+            margin-bottom: 25px;
             animation: heartbeat 1.5s infinite;
             filter: drop-shadow(0 5px 15px rgba(245, 87, 108, 0.4));
         }
@@ -551,15 +668,15 @@
         }
 
         .final-message {
-            font-size: 24px;
-            line-height: 2;
+            font-size: 18px;
+            line-height: 1.7;
             color: #2d3436;
             white-space: pre-wrap;
             font-weight: 400;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            letter-spacing: 0.3px;
         }
 
-        /* 星星背景动画 */
         .stars {
             position: fixed;
             width: 100%;
@@ -583,7 +700,6 @@
             50% { opacity: 1; transform: scale(1.5); }
         }
 
-        /* 爱心动画背景 */
         .hearts {
             position: fixed;
             width: 100%;
@@ -617,7 +733,6 @@
             }
         }
 
-        /* 粒子效果 */
         .particles {
             position: fixed;
             width: 100%;
@@ -653,62 +768,18 @@
             }
         }
 
-        /* 音乐控制按钮 */
-        .music-control {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-            z-index: 3000;
-            transition: all 0.4s;
-            animation: musicPulse 2s infinite;
-        }
-
-        .music-control:hover {
-            transform: scale(1.1);
-            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
-        }
-
-        .music-control.playing {
-            animation: musicPulse 2s infinite, rotate 3s linear infinite;
-        }
-
-        @keyframes musicPulse {
-            0%, 100% { box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4); }
-            50% { box-shadow: 0 15px 40px rgba(102, 126, 234, 0.7); }
-        }
-
-        .music-icon {
-            font-size: 28px;
-            color: white;
-            transition: transform 0.3s;
-        }
-
-        .music-control:active .music-icon {
-            transform: scale(0.9);
-        }
-
-        /* 响应式设计 */
         @media (max-width: 768px) {
             .intro-content, .final-content {
-                padding: 40px 30px;
+                padding: 35px 25px;
                 max-width: 95%;
             }
 
             #intro-text, .final-message {
-                font-size: 20px;
+                font-size: 18px;
             }
 
             .game-container {
-                padding: 25px;
+                padding: 20px;
             }
 
             canvas {
@@ -716,13 +787,32 @@
                 height: auto;
             }
 
-            .instruction-content, .modal-content {
-                padding: 35px 25px;
+            .instruction-content, .modal-content, .final-question-content {
+                padding: 30px 20px;
+            }
+
+            .game-title {
+                font-size: 22px;
+            }
+
+            .question, .final-question-text {
+                font-size: 18px;
             }
         }
     </style>
 </head>
 <body>
+    <!-- 背景音乐 -->
+    <audio id="background-music" loop>
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+    
+    <!-- 倒计时元素 -->
+    <div class="countdown" id="countdown">
+        <div class="countdown-message">请将左手放在左右两按键上，游戏即将开始</div>
+        <div class="countdown-number" id="countdown-number">5</div>
+    </div>
+
     <!-- 星星背景 -->
     <div class="stars" id="stars"></div>
     
@@ -745,15 +835,10 @@
     <!-- 游戏1失败页面 -->
     <div id="failure1-page" class="page failure-page">
         <div class="failure-content">
-            <div class="failure-emoji">😭</div>
-            <div class="failure-title">哎呀，被抓到了！</div>
+            <div class="failure-emoji">👿</div>
+            <div class="failure-title">笨！👿</div>
             <div class="failure-text">
-没关系啦，失败是成功之母~
-就像我们的爱情一样，
-经历过风雨才能见彩虹。
-
-接下来，回答几个小问题，
-让我看看你有多了解我们的关系~ 💕
+游戏玩不过，那就答题吧！ 💕
             </div>
             <button class="continue-btn" onclick="continueAfterFailure(1)">好的，开始答题 💪</button>
         </div>
@@ -763,7 +848,7 @@
     <div id="game1-page" class="page game-page">
         <div class="game-container">
             <div class="game-title">第一关 - 躲避挑战 🎮</div>
-            <canvas id="game1-canvas" width="600" height="400"></canvas>
+            <canvas id="game1-canvas" width="500" height="350"></canvas>
             <div class="game-info">提示：使用方向键移动，尽量不要碰到障碍物哦~ 😊</div>
         </div>
     </div>
@@ -771,15 +856,10 @@
     <!-- 游戏2失败页面 -->
     <div id="failure2-page" class="page failure-page">
         <div class="failure-content">
-            <div class="failure-emoji">🥺</div>
-            <div class="failure-title">差一点点就成功了！</div>
+            <div class="failure-emoji">😈</div>
+            <div class="failure-title">菜！</div>
             <div class="failure-text">
-看来这关有点难呢~
-不过没关系，
-你在我心里永远都是最棒的！
-
-再来回答几个问题，
-证明你对我的心意吧~ ❤️
+继续答题！😏
             </div>
             <button class="continue-btn" onclick="continueAfterFailure(2)">继续答题，加油！💖</button>
         </div>
@@ -789,7 +869,7 @@
     <div id="game2-page" class="page game-page">
         <div class="game-container">
             <div class="game-title">第二关 - 接球挑战 💗</div>
-            <canvas id="game2-canvas" width="600" height="400"></canvas>
+            <canvas id="game2-canvas" width="500" height="350"></canvas>
             <div class="game-info">提示：使用方向键左右移动,接住下落的心形~ ❤️</div>
         </div>
     </div>
@@ -798,8 +878,22 @@
     <div id="game3-page" class="page game-page">
         <div class="game-container">
             <div class="game-title">第三关 - 收集爱心 💕</div>
-            <canvas id="game3-canvas" width="600" height="400"></canvas>
+            <canvas id="game3-canvas" width="500" height="350"></canvas>
             <div class="game-info">提示：点击屏幕上的爱心收集它们~ 💖</div>
+        </div>
+    </div>
+
+    <!-- 最后一个问题模态框（游戏3后） -->
+    <div id="final-question-modal" class="final-question-modal">
+        <div class="final-question-content">
+            <div class="final-question-text" id="final-question-text">
+最后一个问题：
+你愿意永远做我的____吗？
+            </div>
+            <div class="final-options">
+                <button class="final-option-btn" onclick="checkFinalAnswer('A')">A. 最佳队友 👥</button>
+                <button class="final-option-btn" onclick="checkFinalAnswer('B')">B. 唯一主角 ⭐</button>
+            </div>
         </div>
     </div>
 
@@ -809,17 +903,18 @@
             <div class="transition-emoji">🎉</div>
             <div class="transition-title">恭喜闯关成功！</div>
             <div class="transition-message">
-亲爱的，你太棒了！
+恭喜你，成功通关！
 
-我们的关系就像这闯关游戏一样，
-会有挑战，会有困难，
-但只要我们在一起，
-就能克服一切！
+收集了所有关于我的答案，现在正式解锁专属奖励——一个满分认真的我。
+
+我们的恋爱就像一场甜蜜的双人闯关，不需要单打独斗的英雄，只需要并肩作战的我们。
+往后的每一关，无论是日常琐碎还是星辰大海，都请牵紧我的手，我们一起慢慢解锁。
 
 接下来，是给你的专属奖励~
 准备好接收我的爱了吗？💝
             </div>
-            <div class="transition-hint">✨ 点击任意区域查看奖励 ✨</div>
+            <div class="transition-hint">✨ 按下空格键查看奖励 ✨</div>
+            <div class="space-hint">👇 Press Space 👇</div>
         </div>
     </div>
 
@@ -827,10 +922,7 @@
     <div id="video-page" class="page">
         <div class="video-container">
             <video id="reward-video" controls>
-                <source src="视频.MOV" type="video/mp4">
-                <source src="视频.mov" type="video/mp4">
-                <source src="video.MOV" type="video/mp4">
-                <source src="video.mov" type="video/mp4">
+                <source src="IMG_7346.MOV" type="video/mp4">
                 您的浏览器不支持视频播放
             </video>
         </div>
@@ -841,7 +933,7 @@
         <div class="final-content">
             <div class="heart-icon">💖</div>
             <div class="final-message">
-亲爱的 qyj：
+亲爱的\n：
 
 恭喜你通关了所有挑战！
 就像游戏一样，我们的每一天都充满了惊喜和挑战。
@@ -874,76 +966,23 @@
     <div id="question-modal" class="modal">
         <div class="modal-content">
             <div class="question" id="question-text"></div>
-            <div class="options">
+            <div class="options" id="options-container">
                 <button class="option-btn" id="option-a"></button>
                 <button class="option-btn" id="option-b"></button>
+                <button class="option-btn" id="option-c" style="display:none;"></button>
             </div>
         </div>
     </div>
 
     <!-- 答题错误提示 -->
     <div class="wrong-answer" id="wrong-answer">😠</div>
-
-    <!-- 背景音乐 -->
-    <audio id="bg-music" loop>
-        <source src="music.mp3" type="audio/mpeg">
-        您的浏览器不支持音频播放
-    </audio>
-
-    <!-- 音乐控制按钮 -->
-    <div class="music-control" id="music-control">
-        <div class="music-icon" id="music-icon">🔇</div>
-    </div>
-
+    
     <script>
         // 全局变量
         let currentPage = 'intro';
         let currentQuestionIndex = 0;
         let currentGame = 1;
-        let isMusicPlaying = false;
-        let musicAttempted = false;
-
-        // 音乐控制
-        const bgMusic = document.getElementById('bg-music');
-        const musicControl = document.getElementById('music-control');
-        const musicIcon = document.getElementById('music-icon');
-
-        // 切换音乐播放状态
-        function toggleMusic() {
-            if (isMusicPlaying) {
-                bgMusic.pause();
-                musicIcon.textContent = '🔇';
-                musicControl.classList.remove('playing');
-                isMusicPlaying = false;
-            } else {
-                bgMusic.play().then(() => {
-                    musicIcon.textContent = '🎵';
-                    musicControl.classList.add('playing');
-                    isMusicPlaying = true;
-                }).catch(error => {
-                    console.log('音乐播放失败:', error);
-                });
-            }
-        }
-
-        // 尝试自动播放音乐（在用户第一次交互后）
-        function tryPlayMusic() {
-            if (!musicAttempted) {
-                musicAttempted = true;
-                bgMusic.play().then(() => {
-                    musicIcon.textContent = '🎵';
-                    musicControl.classList.add('playing');
-                    isMusicPlaying = true;
-                }).catch(error => {
-                    // 自动播放失败，等待用户手动点击
-                    console.log('自动播放失败，需要用户交互');
-                    musicIcon.textContent = '🔇';
-                });
-            }
-        }
-
-        // 音乐控制按钮点击事件
-        musicControl.addEventListener('click', toggleMusic);
+        let backgroundMusic;
 
         // 游戏说明内容
         const gameInstructions = {
@@ -965,36 +1004,61 @@
         const questions = {
             game1: [
                 {
-                    question: "你明天最想见到的是谁？",
-                    optionA: "我",
-                    optionB: "其他人",
+                    question: "这个世界上你最想见的人是谁？",
+                    optionA: "杨华斌",
+                    optionB: "范冰冰",
+                    optionC: "吴彦祖",
                     answer: "A"
                 },
                 {
-                    question: "如果有一天可以自由支配，你最想和谁一起度过？",
-                    optionA: "和你一起",
-                    optionB: "一个人宅在家",
+                    question: "谁是你心目中最最帅的人？",
+                    optionA: "杨华斌",
+                    optionB: "杨华斌",
+                    optionC: "杨华斌",
+                    answer: "A"
+                },
+                {
+                    question: "现在最想拥抱的人是谁？",
+                    optionA: "杨华斌",
+                    optionB: "彭于晏",
+                    optionC: "吴彦祖",
                     answer: "A"
                 }
             ],
             game2: [
                 {
-                    question: "在你心里，谁是最特别的那个人？",
-                    optionA: "是你啊",
-                    optionB: "还在寻找中",
+                    question: "谁可以无条件随时打扰你？",
+                    optionA: "杨华斌",
+                    optionB: "10086客服",
+                    optionC: null,
                     answer: "A"
                 },
                 {
-                    question: "如果可以许一个愿望，你会许什么？",
-                    optionA: "和你永远在一起",
-                    optionB: "中彩票",
+                    question: "你现在正在和谁谈恋爱？",
+                    optionA: "杨华斌",
+                    optionB: "狗",
+                    optionC: null,
                     answer: "A"
+                },
+                {
+                    question: "你需要我每天想你多少次？",
+                    optionA: "无数次",
+                    optionB: "一次（但这一次是一整天）",
+                    optionC: null,
+                    answer: "A"
+                },
+                {
+                    question: "我们俩谁更笨一点？",
+                    optionA: "杨华斌",
+                    optionB: "全舣桢",
+                    optionC: null,
+                    answer: "B"
                 }
             ]
         };
 
         // 开场打字效果
-        const introText = "qyj 你好，这是我们在一起的第一天，首先让我们玩一个趣味小游戏，通关后可获得你的专属奖励，\n让我们开始吧，点击任意区域继续...";
+        const introText = "全舣桢，这是我们在一起的第一天！\n首先，让我们玩一个趣味小游戏，通关后可获得你的专属奖励，\n让我们开始吧，点击任意区域继续...";
         let introIndex = 0;
 
         function typeIntro() {
@@ -1006,6 +1070,27 @@
                 document.getElementById('intro-text').innerHTML += '<span class="cursor"></span>';
                 document.getElementById('click-hint').style.display = 'block';
             }
+        }
+
+        // 倒计时功能
+        function startCountdown(gameFunc) {
+            const countdownEl = document.getElementById('countdown');
+            const numberEl = document.getElementById('countdown-number');
+            let count = 5;
+            
+            countdownEl.classList.add('active');
+            numberEl.textContent = count;
+            
+            const countdownInterval = setInterval(() => {
+                count--;
+                numberEl.textContent = count;
+                
+                if (count <= 0) {
+                    clearInterval(countdownInterval);
+                    countdownEl.classList.remove('active');
+                    gameFunc(); // 开始游戏
+                }
+            }, 1000);
         }
 
         // 页面切换
@@ -1034,10 +1119,11 @@
         function startGameAfterInstruction() {
             document.getElementById('instruction-modal').classList.remove('active');
             
+            // 游戏1和游戏2前显示倒计时
             if (currentGame === 1) {
-                startGame1();
+                startCountdown(startGame1);
             } else if (currentGame === 2) {
-                startGame2();
+                startCountdown(startGame2);
             } else if (currentGame === 3) {
                 startGame3();
             }
@@ -1057,6 +1143,16 @@
                 document.getElementById('question-text').textContent = q.question;
                 document.getElementById('option-a').textContent = `A. ${q.optionA}`;
                 document.getElementById('option-b').textContent = `B. ${q.optionB}`;
+                
+                // 处理C选项
+                const optionC = document.getElementById('option-c');
+                if (q.optionC) {
+                    optionC.textContent = `C. ${q.optionC}`;
+                    optionC.style.display = 'block';
+                } else {
+                    optionC.style.display = 'none';
+                }
+                
                 document.getElementById('question-modal').classList.add('active');
             } else {
                 // 所有问题回答完毕，进入下一个游戏
@@ -1064,7 +1160,7 @@
                 if (currentGame === 1) {
                     switchPage('game2-page');
                     setTimeout(() => showInstruction(2), 500);
-                } else {
+                } else if (currentGame === 2) {
                     switchPage('game3-page');
                     setTimeout(() => showInstruction(3), 500);
                 }
@@ -1075,13 +1171,20 @@
         function checkAnswer(selected) {
             const questionSet = currentGame === 1 ? questions.game1 : questions.game2;
             const q = questionSet[currentQuestionIndex];
-            if (selected === q.answer) {
+            
+            if (selected === q.answer || (q.optionB === q.optionA && q.optionC === q.optionA)) {
                 currentQuestionIndex++;
                 showNextQuestion();
             } else {
-                // 答错了，显示生气表情
                 showWrongAnswer();
             }
+        }
+
+        // 检查最后一个问题的答案
+        function checkFinalAnswer(selected) {
+            // 任何选择都可以接受（两个都是正确答案）
+            document.getElementById('final-question-modal').classList.remove('active');
+            switchPage('transition-page');
         }
 
         // 显示答题错误提示
@@ -1146,7 +1249,7 @@
             const canvas = document.getElementById('game1-canvas');
             const ctx = canvas.getContext('2d');
             
-            let player = { x: 300, y: 350, width: 30, height: 30, speed: 5 };
+            let player = { x: 250, y: 300, width: 30, height: 30, speed: 5 };
             let obstacles = [];
             let keys = {};
             let gameOver = false;
@@ -1154,7 +1257,7 @@
             // 创建大量障碍物（困难模式）
             for (let i = 0; i < 8; i++) {
                 obstacles.push({
-                    x: Math.random() * 570,
+                    x: Math.random() * 470,
                     y: -Math.random() * 400 - 50,
                     width: 40,
                     height: 40,
@@ -1238,7 +1341,7 @@
             const canvas = document.getElementById('game2-canvas');
             const ctx = canvas.getContext('2d');
             
-            let paddle = { x: 270, y: 360, width: 80, height: 15, speed: 7 };
+            let paddle = { x: 210, y: 310, width: 80, height: 15, speed: 7 };
             let balls = [];
             let keys = {};
             let gameOver = false;
@@ -1318,8 +1421,8 @@
 
                 // 显示错过计数
                 ctx.fillStyle = '#333';
-                ctx.font = 'bold 20px Arial';
-                ctx.fillText(`错过: ${missCount}/3`, 10, 35);
+                ctx.font = 'bold 18px Arial';
+                ctx.fillText(`错过: ${missCount}/3`, 10, 30);
             }
 
             document.addEventListener('keydown', (e) => keys[e.key] = true);
@@ -1352,7 +1455,7 @@
             }
 
             // 初始创建足够的爱心
-            for (let i = 0; i < 8; i++) {
+            for (let i = 0; i < 15; i++) {
                 createHeart();
             }
 
@@ -1375,32 +1478,33 @@
 
                 // 显示分数（更美观的样式）
                 ctx.fillStyle = '#fff';
-                ctx.fillRect(5, 5, 180, 45);
+                ctx.fillRect(5, 5, 160, 40);
                 ctx.strokeStyle = '#f5576c';
-                ctx.lineWidth = 3;
-                ctx.strokeRect(5, 5, 180, 45);
+                ctx.lineWidth = 2;
+                ctx.strokeRect(5, 5, 160, 40);
                 
                 ctx.fillStyle = '#f5576c';
-                ctx.font = 'bold 24px Arial';
-                ctx.fillText(`收集: ${score}/${targetScore}`, 15, 35);
+                ctx.font = 'bold 20px Arial';
+                ctx.fillText(`收集: ${score}/${targetScore}`, 12, 32);
 
                 if (score >= targetScore && !gameCompleted) {
                     gameCompleted = true;
                     
                     // 绘制胜利文字
                     ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
-                    ctx.fillRect(canvas.width/2 - 180, canvas.height/2 - 50, 360, 100);
+                    ctx.fillRect(canvas.width/2 - 150, canvas.height/2 - 40, 300, 80);
                     
-                    const gradient = ctx.createLinearGradient(canvas.width/2 - 150, 0, canvas.width/2 + 150, 0);
+                    const gradient = ctx.createLinearGradient(canvas.width/2 - 120, 0, canvas.width/2 + 120, 0);
                     gradient.addColorStop(0, '#f093fb');
                     gradient.addColorStop(1, '#f5576c');
                     ctx.fillStyle = gradient;
-                    ctx.font = 'bold 42px Arial';
-                    ctx.fillText('恭喜通关！🎉', canvas.width/2 - 150, canvas.height/2 + 15);
+                    ctx.font = 'bold 36px Arial';
+                    ctx.fillText('恭喜通关！🎉', canvas.width/2 - 120, canvas.height/2 + 10);
                     
                     setTimeout(() => {
-                        switchPage('transition-page');
-                    }, 2000);
+                        // 显示最后一个问题
+                        document.getElementById('final-question-modal').classList.add('active');
+                    }, 1500);
                 }
             }
 
@@ -1439,6 +1543,8 @@
 
         // 播放视频
         function playVideo() {
+            // 视频播放时暂停背景音乐
+            backgroundMusic.pause();
             const video = document.getElementById('reward-video');
             video.play();
             video.addEventListener('ended', () => {
@@ -1448,26 +1554,40 @@
             });
         }
 
-        // 事件监听
+        // 事件监听 - 关键修改：点击初始页面继续时播放音乐
         document.getElementById('intro-page').addEventListener('click', function() {
             if (introIndex >= introText.length) {
-                tryPlayMusic(); // 尝试播放背景音乐
+                // 点击"继续"时播放背景音乐（用户交互触发，符合浏览器政策）
+                backgroundMusic.play().then(() => {
+                    console.log('背景音乐播放成功');
+                }).catch(e => {
+                    console.log('背景音乐播放失败（浏览器限制）:', e);
+                });
+                
                 switchPage('game1-page');
                 setTimeout(() => showInstruction(1), 500);
             }
         });
 
-        document.getElementById('transition-page').addEventListener('click', function() {
-            switchPage('video-page');
-            playVideo();
+        // 过渡页面空格键触发
+        document.addEventListener('keydown', function(e) {
+            if (e.code === 'Space' && currentPage === 'transition-page') {
+                e.preventDefault();
+                switchPage('video-page');
+                playVideo();
+            }
         });
 
         document.getElementById('start-game-btn').addEventListener('click', startGameAfterInstruction);
         document.getElementById('option-a').addEventListener('click', () => checkAnswer('A'));
         document.getElementById('option-b').addEventListener('click', () => checkAnswer('B'));
+        document.getElementById('option-c').addEventListener('click', () => checkAnswer('C'));
 
         // 初始化
         window.onload = function() {
+            // 获取音乐元素
+            backgroundMusic = document.getElementById('background-music');
+            
             typeIntro();
             createStars();
             createHearts();
