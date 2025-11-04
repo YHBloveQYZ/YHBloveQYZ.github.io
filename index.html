@@ -1,0 +1,1597 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>给你的专属奖励 ❤️</title>
+    <style>
+        /* 保持原有样式不变 */
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Ma+Shan+Zheng&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', 'Microsoft YaHei', 'Arial', sans-serif;
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            font-size: 16px;
+        }
+
+        /* 倒计时样式 */
+        .countdown {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            color: white;
+        }
+        
+        .countdown.active {
+            display: flex;
+        }
+        
+        .countdown-message {
+            font-size: 24px;
+            margin-bottom: 30px;
+            text-align: center;
+            padding: 0 20px;
+        }
+        
+        .countdown-number {
+            font-size: 120px;
+            font-weight: bold;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        /* 页面容器 */
+        .page {
+            display: none;
+            width: 100%;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        .page.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* 开场页面 */
+        #intro-page {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            cursor: pointer;
+            flex-direction: column;
+        }
+
+        .intro-content {
+            max-width: 750px;
+            padding: 45px;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 25px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
+            text-align: center;
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        #intro-text {
+            font-size: 22px;
+            line-height: 1.8;
+            color: #2d3436;
+            min-height: 180px;
+            white-space: pre-wrap;
+            font-weight: 400;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            letter-spacing: 0.5px;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 3px;
+            height: 22px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            animation: blink 1s infinite;
+            margin-left: 3px;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .click-hint {
+            margin-top: 30px;
+            font-size: 18px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: pulse 2s infinite;
+            letter-spacing: 1px;
+        }
+
+        /* 其余样式保持不变 */
+        .game-page {
+            flex-direction: column;
+        }
+
+        #game1-page {
+            background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+        }
+
+        #game2-page {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        #game3-page {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .game-container {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
+            border: 3px solid rgba(255, 255, 255, 0.6);
+        }
+
+        .game-title {
+            font-size: 26px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 0 2px 10px rgba(245, 87, 108, 0.2);
+            letter-spacing: 1px;
+        }
+
+        canvas {
+            display: block;
+            border: 3px solid;
+            border-image: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) 1;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #fff5f7 0%, #fffef9 100%);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .game-info {
+            margin-top: 15px;
+            font-size: 16px;
+            color: #555;
+            text-align: center;
+            font-weight: 400;
+            letter-spacing: 0.3px;
+        }
+
+        .instruction-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .instruction-modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .instruction-content {
+            background: white;
+            padding: 40px;
+            border-radius: 25px;
+            max-width: 550px;
+            width: 90%;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+            animation: slideInUp 0.5s ease-out;
+            text-align: center;
+            border: 3px solid rgba(245, 87, 108, 0.3);
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .instruction-title {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 1px;
+        }
+
+        .instruction-text {
+            font-size: 17px;
+            line-height: 1.7;
+            color: #333;
+            margin-bottom: 25px;
+            white-space: pre-line;
+            letter-spacing: 0.3px;
+        }
+
+        .instruction-btn {
+            padding: 15px 40px;
+            font-size: 17px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            letter-spacing: 0.5px;
+        }
+
+        .instruction-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 25px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+            animation: slideIn 0.5s ease-out;
+            border: 3px solid rgba(245, 87, 108, 0.3);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: scale(0.7);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .question {
+            font-size: 21px;
+            font-weight: 600;
+            color: #2d3436;
+            margin-bottom: 30px;
+            text-align: center;
+            line-height: 1.6;
+            letter-spacing: 0.5px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option-btn {
+            padding: 17px 30px;
+            font-size: 17px;
+            font-weight: 500;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.4s;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            letter-spacing: 0.3px;
+        }
+
+        .option-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.5);
+        }
+
+        .option-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .failure-page {
+            flex-direction: column;
+        }
+
+        #failure1-page {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+        }
+
+        #failure2-page {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        }
+
+        .failure-content {
+            max-width: 650px;
+            padding: 45px;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 25px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
+            text-align: center;
+            border: 3px solid rgba(255, 255, 255, 0.6);
+            animation: shakeIn 0.8s ease-out;
+        }
+
+        @keyframes shakeIn {
+            0% { transform: scale(0.8) rotate(-5deg); opacity: 0; }
+            50% { transform: scale(1.05) rotate(5deg); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        .failure-emoji {
+            font-size: 80px;
+            margin-bottom: 25px;
+            animation: swing 1s infinite;
+        }
+
+        @keyframes swing {
+            0%, 100% { transform: rotate(-10deg); }
+            50% { transform: rotate(10deg); }
+        }
+
+        .failure-title {
+            font-size: 30px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 1px;
+        }
+
+        .failure-text {
+            font-size: 18px;
+            line-height: 1.7;
+            color: #2d3436;
+            margin-bottom: 30px;
+            white-space: pre-line;
+            letter-spacing: 0.3px;
+        }
+
+        .continue-btn {
+            padding: 15px 40px;
+            font-size: 17px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            letter-spacing: 0.5px;
+        }
+
+        .continue-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+        }
+
+        #transition-page {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        }
+
+        .transition-content {
+            max-width: 700px;
+            padding: 45px;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 25px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
+            text-align: center;
+            border: 3px solid rgba(255, 255, 255, 0.6);
+            animation: bounceIn 0.8s ease-out;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.1); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .transition-emoji {
+            font-size: 80px;
+            margin-bottom: 25px;
+            animation: rotate 2s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.2); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        .transition-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: glow 2s infinite;
+            letter-spacing: 1px;
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 20px rgba(245, 87, 108, 0.5); }
+            50% { text-shadow: 0 0 40px rgba(245, 87, 108, 0.8); }
+        }
+
+        .transition-message {
+            font-size: 18px;
+            line-height: 1.7;
+            color: #2d3436;
+            white-space: pre-line;
+            margin-bottom: 30px;
+            letter-spacing: 0.3px;
+        }
+
+        .transition-hint {
+            font-size: 18px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: pulse 2s infinite;
+            letter-spacing: 0.5px;
+        }
+
+        .space-hint {
+            margin-top: 15px;
+            font-size: 17px;
+            color: #764ba2;
+            font-weight: 500;
+        }
+
+        #video-page {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            flex-direction: column;
+        }
+
+        .video-container {
+            background: rgba(255, 255, 255, 0.98);
+            padding: 30px;
+            border-radius: 25px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
+            border: 3px solid rgba(255, 255, 255, 0.6);
+        }
+
+        video {
+            max-width: 550px;
+            width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .wrong-answer {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 120px;
+            z-index: 2000;
+            animation: wrongShake 0.5s ease-in-out;
+        }
+
+        .wrong-answer.show {
+            display: block;
+        }
+
+        @keyframes wrongShake {
+            0%, 100% { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+            25% { transform: translate(-50%, -50%) rotate(-15deg) scale(1.2); }
+            75% { transform: translate(-50%, -50%) rotate(15deg) scale(1.2); }
+        }
+
+        .final-question-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .final-question-modal.active {
+            display: flex;
+        }
+
+        .final-question-content {
+            background: white;
+            padding: 50px;
+            border-radius: 25px;
+            max-width: 550px;
+            width: 90%;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+            animation: slideIn 0.5s ease-out;
+            border: 3px solid rgba(245, 87, 108, 0.3);
+            text-align: center;
+        }
+
+        .final-question-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2d3436;
+            margin-bottom: 35px;
+            line-height: 1.8;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 0.5px;
+        }
+
+        .final-options {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .final-option-btn {
+            padding: 18px 35px;
+            font-size: 18px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.4s;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            letter-spacing: 0.3px;
+        }
+
+        .final-option-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.5);
+        }
+
+        #final-page {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        }
+
+        .final-content {
+            max-width: 700px;
+            padding: 45px;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 25px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
+            text-align: center;
+            border: 3px solid rgba(255, 255, 255, 0.6);
+            animation: heartPop 0.8s ease-out;
+        }
+
+        @keyframes heartPop {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .heart-icon {
+            font-size: 70px;
+            margin-bottom: 25px;
+            animation: heartbeat 1.5s infinite;
+            filter: drop-shadow(0 5px 15px rgba(245, 87, 108, 0.4));
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.15); }
+            50% { transform: scale(1); }
+        }
+
+        .final-message {
+            font-size: 18px;
+            line-height: 1.7;
+            color: #2d3436;
+            white-space: pre-wrap;
+            font-weight: 400;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            letter-spacing: 0.3px;
+        }
+
+        .stars {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .star {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
+        }
+
+        .hearts {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 30px;
+            animation: float 8s infinite;
+            opacity: 0.7;
+            filter: drop-shadow(0 0 10px rgba(255, 182, 193, 0.6));
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.7;
+            }
+            90% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-150px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .particles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(255, 182, 193, 0.5) 100%);
+            border-radius: 50%;
+            animation: particleFloat 6s infinite;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(50px);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .intro-content, .final-content {
+                padding: 35px 25px;
+                max-width: 95%;
+            }
+
+            #intro-text, .final-message {
+                font-size: 18px;
+            }
+
+            .game-container {
+                padding: 20px;
+            }
+
+            canvas {
+                max-width: 100%;
+                height: auto;
+            }
+
+            .instruction-content, .modal-content, .final-question-content {
+                padding: 30px 20px;
+            }
+
+            .game-title {
+                font-size: 22px;
+            }
+
+            .question, .final-question-text {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 背景音乐 -->
+    <audio id="background-music" loop>
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+    
+    <!-- 倒计时元素 -->
+    <div class="countdown" id="countdown">
+        <div class="countdown-message">请将左手放在左右两按键上，游戏即将开始</div>
+        <div class="countdown-number" id="countdown-number">5</div>
+    </div>
+
+    <!-- 星星背景 -->
+    <div class="stars" id="stars"></div>
+    
+    <!-- 粒子效果 -->
+    <div class="particles" id="particles"></div>
+    
+    <!-- 爱心背景 -->
+    <div class="hearts" id="hearts"></div>
+
+    <!-- 开场页面 -->
+    <div id="intro-page" class="page active">
+        <div class="intro-content">
+            <div id="intro-text"></div>
+            <div class="click-hint" id="click-hint" style="display: none;">
+                ✨ 点击任意区域继续 ✨
+            </div>
+        </div>
+    </div>
+
+    <!-- 游戏1失败页面 -->
+    <div id="failure1-page" class="page failure-page">
+        <div class="failure-content">
+            <div class="failure-emoji">👿</div>
+            <div class="failure-title">笨！👿</div>
+            <div class="failure-text">
+游戏玩不过，那就答题吧！ 💕
+            </div>
+            <button class="continue-btn" onclick="continueAfterFailure(1)">好的，开始答题 💪</button>
+        </div>
+    </div>
+
+    <!-- 游戏1页面 -->
+    <div id="game1-page" class="page game-page">
+        <div class="game-container">
+            <div class="game-title">第一关 - 躲避挑战 🎮</div>
+            <canvas id="game1-canvas" width="500" height="350"></canvas>
+            <div class="game-info">提示：使用方向键移动，尽量不要碰到障碍物哦~ 😊</div>
+        </div>
+    </div>
+
+    <!-- 游戏2失败页面 -->
+    <div id="failure2-page" class="page failure-page">
+        <div class="failure-content">
+            <div class="failure-emoji">😈</div>
+            <div class="failure-title">菜！</div>
+            <div class="failure-text">
+继续答题！😏
+            </div>
+            <button class="continue-btn" onclick="continueAfterFailure(2)">继续答题，加油！💖</button>
+        </div>
+    </div>
+
+    <!-- 游戏2页面 -->
+    <div id="game2-page" class="page game-page">
+        <div class="game-container">
+            <div class="game-title">第二关 - 接球挑战 💗</div>
+            <canvas id="game2-canvas" width="500" height="350"></canvas>
+            <div class="game-info">提示：使用方向键左右移动,接住下落的心形~ ❤️</div>
+        </div>
+    </div>
+
+    <!-- 游戏3页面 -->
+    <div id="game3-page" class="page game-page">
+        <div class="game-container">
+            <div class="game-title">第三关 - 收集爱心 💕</div>
+            <canvas id="game3-canvas" width="500" height="350"></canvas>
+            <div class="game-info">提示：点击屏幕上的爱心收集它们~ 💖</div>
+        </div>
+    </div>
+
+    <!-- 最后一个问题模态框（游戏3后） -->
+    <div id="final-question-modal" class="final-question-modal">
+        <div class="final-question-content">
+            <div class="final-question-text" id="final-question-text">
+最后一个问题：
+你愿意永远做我的____吗？
+            </div>
+            <div class="final-options">
+                <button class="final-option-btn" onclick="checkFinalAnswer('A')">A. 最佳队友 👥</button>
+                <button class="final-option-btn" onclick="checkFinalAnswer('B')">B. 唯一主角 ⭐</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 过渡页面（视频前） -->
+    <div id="transition-page" class="page">
+        <div class="transition-content">
+            <div class="transition-emoji">🎉</div>
+            <div class="transition-title">恭喜闯关成功！</div>
+            <div class="transition-message">
+恭喜你，成功通关！
+
+收集了所有关于我的答案，现在正式解锁专属奖励——一个满分认真的我。
+
+我们的恋爱就像一场甜蜜的双人闯关，不需要单打独斗的英雄，只需要并肩作战的我们。
+往后的每一关，无论是日常琐碎还是星辰大海，都请牵紧我的手，我们一起慢慢解锁。
+
+接下来，是给你的专属奖励~
+准备好接收我的爱了吗？💝
+            </div>
+            <div class="transition-hint">✨ 按下空格键查看奖励 ✨</div>
+            <div class="space-hint">👇 Press Space 👇</div>
+        </div>
+    </div>
+
+    <!-- 视频页面 -->
+    <div id="video-page" class="page">
+        <div class="video-container">
+            <video id="reward-video" controls>
+                 <source src="https://github.com/YHBloveQYZ/YHBloveQYZ.github.io/raw/refs/heads/main/IMG_7346.mp4" type="video/mp4">
+            </video>
+        </div>
+    </div>
+
+    <!-- 最终页面 -->
+    <div id="final-page" class="page">
+        <div class="final-content">
+            <div class="heart-icon">💖</div>
+            <div class="final-message">
+亲爱的\n：
+
+恭喜你通关了所有挑战！
+就像游戏一样，我们的每一天都充满了惊喜和挑战。
+但只要我们在一起，任何困难都能克服。
+
+你是我生命中最美好的奇遇，
+是我每个清晨醒来的理由，
+是我每个夜晚入睡前的牵挂。
+
+感谢你出现在我的生命里，
+让我的世界变得如此美好。
+
+我爱你 ❤️
+
+永远爱你的那个人
+            </div>
+        </div>
+    </div>
+
+    <!-- 游戏说明模态框 -->
+    <div id="instruction-modal" class="instruction-modal">
+        <div class="instruction-content">
+            <div class="instruction-title" id="instruction-title">游戏说明</div>
+            <div class="instruction-text" id="instruction-text"></div>
+            <button class="instruction-btn" id="start-game-btn">我准备好了！开始游戏 🎮</button>
+        </div>
+    </div>
+
+    <!-- 问答模态框 -->
+    <div id="question-modal" class="modal">
+        <div class="modal-content">
+            <div class="question" id="question-text"></div>
+            <div class="options" id="options-container">
+                <button class="option-btn" id="option-a"></button>
+                <button class="option-btn" id="option-b"></button>
+                <button class="option-btn" id="option-c" style="display:none;"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 答题错误提示 -->
+    <div class="wrong-answer" id="wrong-answer">😠</div>
+    
+    <script>
+        // 全局变量
+        let currentPage = 'intro';
+        let currentQuestionIndex = 0;
+        let currentGame = 1;
+        let backgroundMusic;
+
+        // 游戏说明内容
+        const gameInstructions = {
+            game1: {
+                title: "第一关 - 躲避挑战 🎮",
+                text: "欢迎来到第一关！\n\n在这个关卡中，你需要控制小人躲避不断下落的障碍物。\n\n操作方式：使用键盘的 ↑ ↓ ← → 方向键移动你的角色。\n\n温馨提示：这一关有点难度哦，不要担心碰到障碍物，那样我们才能进入甜蜜的问答环节~ 💕"
+            },
+            game2: {
+                title: "第二关 - 接球挑战 💗",
+                text: "恭喜进入第二关！\n\n这次你需要接住从天而降的爱心，不要让它们掉到地上哦！\n\n操作方式：使用键盘的 ← → 左右方向键移动挡板。\n\n特别提示：错过3个爱心就会进入问答环节啦~ 加油！💪"
+            },
+            game3: {
+                title: "第三关 - 收集爱心 💕",
+                text: "最后一关啦！\n\n这关比较简单，点击屏幕上漂浮的爱心来收集它们！\n\n操作方式：用鼠标点击爱心即可。\n\n目标：收集10个爱心就能通关，获得你的专属奖励！✨"
+            }
+        };
+
+        // 问题数据
+        const questions = {
+            game1: [
+                {
+                    question: "这个世界上你最想见的人是谁？",
+                    optionA: "杨华斌",
+                    optionB: "范冰冰",
+                    optionC: "吴彦祖",
+                    answer: "A"
+                },
+                {
+                    question: "谁是你心目中最最帅的人？",
+                    optionA: "杨华斌",
+                    optionB: "杨华斌",
+                    optionC: "杨华斌",
+                    answer: "A"
+                },
+                {
+                    question: "现在最想拥抱的人是谁？",
+                    optionA: "杨华斌",
+                    optionB: "彭于晏",
+                    optionC: "吴彦祖",
+                    answer: "A"
+                }
+            ],
+            game2: [
+                {
+                    question: "谁可以无条件随时打扰你？",
+                    optionA: "杨华斌",
+                    optionB: "10086客服",
+                    optionC: null,
+                    answer: "A"
+                },
+                {
+                    question: "你现在正在和谁谈恋爱？",
+                    optionA: "杨华斌",
+                    optionB: "狗",
+                    optionC: null,
+                    answer: "A"
+                },
+                {
+                    question: "你需要我每天想你多少次？",
+                    optionA: "无数次",
+                    optionB: "一次（但这一次是一整天）",
+                    optionC: null,
+                    answer: "A"
+                },
+                {
+                    question: "我们俩谁更笨一点？",
+                    optionA: "杨华斌",
+                    optionB: "全舣桢",
+                    optionC: null,
+                    answer: "B"
+                }
+            ]
+        };
+
+        // 开场打字效果
+        const introText = "全舣桢，这是我们在一起的第一天！\n首先，让我们玩一个趣味小游戏，通关后可获得你的专属奖励，\n让我们开始吧，点击任意区域继续...";
+        let introIndex = 0;
+
+        function typeIntro() {
+            if (introIndex < introText.length) {
+                document.getElementById('intro-text').innerHTML += introText[introIndex];
+                introIndex++;
+                setTimeout(typeIntro, 80);
+            } else {
+                document.getElementById('intro-text').innerHTML += '<span class="cursor"></span>';
+                document.getElementById('click-hint').style.display = 'block';
+            }
+        }
+
+        // 倒计时功能
+        function startCountdown(gameFunc) {
+            const countdownEl = document.getElementById('countdown');
+            const numberEl = document.getElementById('countdown-number');
+            let count = 5;
+            
+            countdownEl.classList.add('active');
+            numberEl.textContent = count;
+            
+            const countdownInterval = setInterval(() => {
+                count--;
+                numberEl.textContent = count;
+                
+                if (count <= 0) {
+                    clearInterval(countdownInterval);
+                    countdownEl.classList.remove('active');
+                    gameFunc(); // 开始游戏
+                }
+            }, 1000);
+        }
+
+        // 页面切换
+        function switchPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+            currentPage = pageId;
+        }
+
+        // 显示游戏说明
+        function showInstruction(gameNum) {
+            const instruction = gameNum === 1 ? gameInstructions.game1 : 
+                               gameNum === 2 ? gameInstructions.game2 : 
+                               gameInstructions.game3;
+            
+            document.getElementById('instruction-title').textContent = instruction.title;
+            document.getElementById('instruction-text').textContent = instruction.text;
+            document.getElementById('instruction-modal').classList.add('active');
+            
+            currentGame = gameNum;
+        }
+
+        // 开始游戏
+        function startGameAfterInstruction() {
+            document.getElementById('instruction-modal').classList.remove('active');
+            
+            // 游戏1和游戏2前显示倒计时
+            if (currentGame === 1) {
+                startCountdown(startGame1);
+            } else if (currentGame === 2) {
+                startCountdown(startGame2);
+            } else if (currentGame === 3) {
+                startGame3();
+            }
+        }
+
+        // 显示问答
+        function showQuestions(gameNum) {
+            currentQuestionIndex = 0;
+            currentGame = gameNum;
+            showNextQuestion();
+        }
+
+        function showNextQuestion() {
+            const questionSet = currentGame === 1 ? questions.game1 : questions.game2;
+            if (currentQuestionIndex < questionSet.length) {
+                const q = questionSet[currentQuestionIndex];
+                document.getElementById('question-text').textContent = q.question;
+                document.getElementById('option-a').textContent = `A. ${q.optionA}`;
+                document.getElementById('option-b').textContent = `B. ${q.optionB}`;
+                
+                // 处理C选项
+                const optionC = document.getElementById('option-c');
+                if (q.optionC) {
+                    optionC.textContent = `C. ${q.optionC}`;
+                    optionC.style.display = 'block';
+                } else {
+                    optionC.style.display = 'none';
+                }
+                
+                document.getElementById('question-modal').classList.add('active');
+            } else {
+                // 所有问题回答完毕，进入下一个游戏
+                document.getElementById('question-modal').classList.remove('active');
+                if (currentGame === 1) {
+                    switchPage('game2-page');
+                    setTimeout(() => showInstruction(2), 500);
+                } else if (currentGame === 2) {
+                    switchPage('game3-page');
+                    setTimeout(() => showInstruction(3), 500);
+                }
+            }
+        }
+
+        // 答案检查
+        function checkAnswer(selected) {
+            const questionSet = currentGame === 1 ? questions.game1 : questions.game2;
+            const q = questionSet[currentQuestionIndex];
+            
+            if (selected === q.answer || (q.optionB === q.optionA && q.optionC === q.optionA)) {
+                currentQuestionIndex++;
+                showNextQuestion();
+            } else {
+                showWrongAnswer();
+            }
+        }
+
+        // 检查最后一个问题的答案
+        function checkFinalAnswer(selected) {
+            // 任何选择都可以接受（两个都是正确答案）
+            document.getElementById('final-question-modal').classList.remove('active');
+            switchPage('transition-page');
+        }
+
+        // 显示答题错误提示
+        function showWrongAnswer() {
+            const wrongAnswerEl = document.getElementById('wrong-answer');
+            wrongAnswerEl.classList.add('show');
+            setTimeout(() => {
+                wrongAnswerEl.classList.remove('show');
+            }, 600);
+        }
+
+        // 失败页面后继续答题
+        function continueAfterFailure(gameNum) {
+            showQuestions(gameNum);
+        }
+
+        // 创建星星背景
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // 爱心背景动画
+        function createHearts() {
+            const heartsContainer = document.getElementById('hearts');
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.textContent = ['❤️', '💕', '💖', '💗', '💝'][Math.floor(Math.random() * 5)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDuration = (Math.random() * 4 + 6) + 's';
+                heart.style.fontSize = (Math.random() * 25 + 20) + 'px';
+                heartsContainer.appendChild(heart);
+                setTimeout(() => heart.remove(), 10000);
+            }, 800);
+        }
+
+        // 粒子效果
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            setInterval(() => {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDuration = (Math.random() * 3 + 4) + 's';
+                particle.style.animationDelay = Math.random() * 2 + 's';
+                particlesContainer.appendChild(particle);
+                setTimeout(() => particle.remove(), 8000);
+            }, 300);
+        }
+
+        // ==================== 游戏1：躲避游戏 ====================
+        let game1Interval;
+        function startGame1() {
+            const canvas = document.getElementById('game1-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            let player = { x: 250, y: 300, width: 30, height: 30, speed: 5 };
+            let obstacles = [];
+            let keys = {};
+            let gameOver = false;
+
+            // 创建大量障碍物（困难模式）
+            for (let i = 0; i < 8; i++) {
+                obstacles.push({
+                    x: Math.random() * 470,
+                    y: -Math.random() * 400 - 50,
+                    width: 40,
+                    height: 40,
+                    speed: 3 + Math.random() * 3
+                });
+            }
+
+            function drawPlayer() {
+                ctx.fillStyle = '#ff6b9d';
+                ctx.beginPath();
+                ctx.arc(player.x + player.width/2, player.y + player.height/2, player.width/2, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // 绘制玩家表情
+                ctx.fillStyle = 'white';
+                ctx.font = '20px Arial';
+                ctx.fillText('😊', player.x + 5, player.y + 23);
+            }
+
+            function drawObstacles() {
+                obstacles.forEach(obs => {
+                    const gradient = ctx.createLinearGradient(obs.x, obs.y, obs.x + obs.width, obs.y + obs.height);
+                    gradient.addColorStop(0, '#764ba2');
+                    gradient.addColorStop(1, '#667eea');
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+                    
+                    // 添加边框
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(obs.x, obs.y, obs.width, obs.height);
+                });
+            }
+
+            function update() {
+                if (gameOver) return;
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // 移动玩家
+                if (keys['ArrowLeft'] && player.x > 0) player.x -= player.speed;
+                if (keys['ArrowRight'] && player.x < canvas.width - player.width) player.x += player.speed;
+                if (keys['ArrowUp'] && player.y > 0) player.y -= player.speed;
+                if (keys['ArrowDown'] && player.y < canvas.height - player.height) player.y += player.speed;
+
+                // 移动障碍物
+                obstacles.forEach(obs => {
+                    obs.y += obs.speed;
+                    if (obs.y > canvas.height) {
+                        obs.y = -obs.height;
+                        obs.x = Math.random() * (canvas.width - obs.width);
+                    }
+
+                    // 碰撞检测
+                    if (player.x < obs.x + obs.width &&
+                        player.x + player.width > obs.x &&
+                        player.y < obs.y + obs.height &&
+                        player.y + player.height > obs.y) {
+                        gameOver = true;
+                        clearInterval(game1Interval);
+                        setTimeout(() => {
+                            switchPage('failure1-page');
+                        }, 500);
+                    }
+                });
+
+                drawPlayer();
+                drawObstacles();
+            }
+
+            document.addEventListener('keydown', (e) => keys[e.key] = true);
+            document.addEventListener('keyup', (e) => keys[e.key] = false);
+
+            game1Interval = setInterval(update, 1000/60);
+        }
+
+        // ==================== 游戏2：接球游戏 ====================
+        let game2Interval;
+        let game2BallInterval;
+        function startGame2() {
+            const canvas = document.getElementById('game2-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            let paddle = { x: 210, y: 310, width: 80, height: 15, speed: 7 };
+            let balls = [];
+            let keys = {};
+            let gameOver = false;
+            let missCount = 0;
+
+            // 创建快速下落的球（困难模式）
+            game2BallInterval = setInterval(() => {
+                if (!gameOver && balls.length < 5) {
+                    balls.push({
+                        x: Math.random() * (canvas.width - 20),
+                        y: 0,
+                        size: 20,
+                        speed: 4 + Math.random() * 3
+                    });
+                }
+            }, 800);
+
+            function drawPaddle() {
+                const gradient = ctx.createLinearGradient(paddle.x, paddle.y, paddle.x + paddle.width, paddle.y);
+                gradient.addColorStop(0, '#f5576c');
+                gradient.addColorStop(1, '#f093fb');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+                
+                // 添加高光效果
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.fillRect(paddle.x, paddle.y, paddle.width, 5);
+            }
+
+            function drawBalls() {
+                balls.forEach(ball => {
+                    ctx.fillStyle = '#ff6b9d';
+                    ctx.font = '24px Arial';
+                    ctx.fillText('❤️', ball.x, ball.y);
+                });
+            }
+
+            function update() {
+                if (gameOver) return;
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // 移动挡板
+                if (keys['ArrowLeft'] && paddle.x > 0) paddle.x -= paddle.speed;
+                if (keys['ArrowRight'] && paddle.x < canvas.width - paddle.width) paddle.x += paddle.speed;
+
+                // 移动球
+                balls = balls.filter(ball => {
+                    ball.y += ball.speed;
+
+                    // 检测是否接到
+                    if (ball.y + ball.size > paddle.y &&
+                        ball.y + ball.size < paddle.y + paddle.height &&
+                        ball.x > paddle.x && ball.x < paddle.x + paddle.width) {
+                        return false; // 接到了，移除球
+                    }
+
+                    // 检测是否掉落
+                    if (ball.y > canvas.height) {
+                        missCount++;
+                        if (missCount >= 3) {
+                            gameOver = true;
+                            clearInterval(game2Interval);
+                            clearInterval(game2BallInterval);
+                            setTimeout(() => {
+                                switchPage('failure2-page');
+                            }, 500);
+                        }
+                        return false;
+                    }
+
+                    return true;
+                });
+
+                drawPaddle();
+                drawBalls();
+
+                // 显示错过计数
+                ctx.fillStyle = '#333';
+                ctx.font = 'bold 18px Arial';
+                ctx.fillText(`错过: ${missCount}/3`, 10, 30);
+            }
+
+            document.addEventListener('keydown', (e) => keys[e.key] = true);
+            document.addEventListener('keyup', (e) => keys[e.key] = false);
+
+            game2Interval = setInterval(update, 1000/60);
+        }
+
+        // ==================== 游戏3：点击收集爱心 ====================
+        function startGame3() {
+            const canvas = document.getElementById('game3-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            let hearts = [];
+            let score = 0;
+            const targetScore = 10;
+            let gameCompleted = false;
+
+            // 创建爱心
+            function createHeart() {
+                const heartTypes = ['💕', '💖', '💗', '💝', '❤️'];
+                hearts.push({
+                    x: Math.random() * (canvas.width - 50) + 25,
+                    y: Math.random() * (canvas.height - 50) + 25,
+                    size: 30,
+                    type: heartTypes[Math.floor(Math.random() * heartTypes.length)],
+                    scale: 1,
+                    pulseDir: 1
+                });
+            }
+
+            // 初始创建足够的爱心
+            for (let i = 0; i < 15; i++) {
+                createHeart();
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // 绘制爱心（带脉动效果）
+                hearts.forEach(heart => {
+                    heart.scale += 0.01 * heart.pulseDir;
+                    if (heart.scale > 1.2) heart.pulseDir = -1;
+                    if (heart.scale < 0.9) heart.pulseDir = 1;
+                    
+                    ctx.save();
+                    ctx.translate(heart.x, heart.y);
+                    ctx.scale(heart.scale, heart.scale);
+                    ctx.font = `${heart.size}px Arial`;
+                    ctx.fillText(heart.type, -heart.size/2, heart.size/2);
+                    ctx.restore();
+                });
+
+                // 显示分数（更美观的样式）
+                ctx.fillStyle = '#fff';
+                ctx.fillRect(5, 5, 160, 40);
+                ctx.strokeStyle = '#f5576c';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(5, 5, 160, 40);
+                
+                ctx.fillStyle = '#f5576c';
+                ctx.font = 'bold 20px Arial';
+                ctx.fillText(`收集: ${score}/${targetScore}`, 12, 32);
+
+                if (score >= targetScore && !gameCompleted) {
+                    gameCompleted = true;
+                    
+                    // 绘制胜利文字
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+                    ctx.fillRect(canvas.width/2 - 150, canvas.height/2 - 40, 300, 80);
+                    
+                    const gradient = ctx.createLinearGradient(canvas.width/2 - 120, 0, canvas.width/2 + 120, 0);
+                    gradient.addColorStop(0, '#f093fb');
+                    gradient.addColorStop(1, '#f5576c');
+                    ctx.fillStyle = gradient;
+                    ctx.font = 'bold 36px Arial';
+                    ctx.fillText('恭喜通关！🎉', canvas.width/2 - 120, canvas.height/2 + 10);
+                    
+                    setTimeout(() => {
+                        // 显示最后一个问题
+                        document.getElementById('final-question-modal').classList.add('active');
+                    }, 1500);
+                }
+            }
+
+            canvas.addEventListener('click', (e) => {
+                if (gameCompleted) return;
+                
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                let clicked = false;
+                hearts = hearts.filter(heart => {
+                    const heartX = heart.x;
+                    const heartY = heart.y;
+                    
+                    if (!clicked && 
+                        x > heartX - heart.size/2 && x < heartX + heart.size/2 &&
+                        y > heartY - heart.size/2 && y < heartY + heart.size/2) {
+                        score++;
+                        clicked = true;
+                        
+                        // 每收集一个就补充一个新的
+                        if (score < targetScore) {
+                            createHeart();
+                        }
+                        return false;
+                    }
+                    return true;
+                });
+
+                draw();
+            });
+
+            setInterval(draw, 1000/60);
+        }
+
+        // 播放视频
+        function playVideo() {
+            // 视频播放时暂停背景音乐
+            backgroundMusic.pause();
+            const video = document.getElementById('reward-video');
+            video.play();
+            video.addEventListener('ended', () => {
+                setTimeout(() => {
+                    switchPage('final-page');
+                }, 1000);
+            });
+        }
+
+        // 事件监听 - 关键修改：点击初始页面继续时播放音乐
+        document.getElementById('intro-page').addEventListener('click', function() {
+            if (introIndex >= introText.length) {
+                // 点击"继续"时播放背景音乐（用户交互触发，符合浏览器政策）
+                backgroundMusic.play().then(() => {
+                    console.log('背景音乐播放成功');
+                }).catch(e => {
+                    console.log('背景音乐播放失败（浏览器限制）:', e);
+                });
+                
+                switchPage('game1-page');
+                setTimeout(() => showInstruction(1), 500);
+            }
+        });
+
+        // 过渡页面空格键触发
+        document.addEventListener('keydown', function(e) {
+            if (e.code === 'Space' && currentPage === 'transition-page') {
+                e.preventDefault();
+                switchPage('video-page');
+                playVideo();
+            }
+        });
+
+        document.getElementById('start-game-btn').addEventListener('click', startGameAfterInstruction);
+        document.getElementById('option-a').addEventListener('click', () => checkAnswer('A'));
+        document.getElementById('option-b').addEventListener('click', () => checkAnswer('B'));
+        document.getElementById('option-c').addEventListener('click', () => checkAnswer('C'));
+
+        // 初始化
+        window.onload = function() {
+            // 获取音乐元素
+            backgroundMusic = document.getElementById('background-music');
+            
+            typeIntro();
+            createStars();
+            createHearts();
+            createParticles();
+        };
+    </script>
+</body>
+</html>
